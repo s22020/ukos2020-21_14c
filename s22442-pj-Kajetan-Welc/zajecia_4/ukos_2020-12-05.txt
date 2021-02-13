@@ -1,0 +1,43 @@
+UKOS ćwiczenia 2020-12-05 (notatka sporządzona 2021-02-12)
+Mój kochany pamiętniczku,
+na dzisiejszych zajęciach odbyła się powtórka materiału.
+
+1.
+relatywna - cd ../../../kot/ma/ale
+absolutna - cd /tmp/ukos/kot/ma/ale
+
+2.
+mkdir -p /tmp/ukos/kot/ma/ale/jan/kowalski
+
+3.
+mv /tmp/ukos/kot/ma/ale /tmp/ukos/ala/i
+
+4.
+kill PID
+killall NAME
+
+5.
+ls -ap | grep -v / | grep -i ^al
+
+6.
+ósemkowa - chmod 751 ala
+symboliczna - chmod a=x,g=rw,u=rwx ala
+
+7.
+ls -ap | grep -v / > plik
+
+8.
+- brak prawa write w bieżącym katalogu
+- brak miejsca na dysku
+
+9.
+tabulator
+
+10.
+1)
+programX &
+
+2)
+programX
+CTRL+Z
+bg

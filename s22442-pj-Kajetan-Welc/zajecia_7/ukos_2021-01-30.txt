@@ -1,0 +1,130 @@
+UKOS ćwiczenia 2021-01-30 (notatka sporządzona 2021-02-12)
+Mój kochany pamiętniczku,
+na dzisiejszych zajęciach uczyliśmy się PowerShella.
+
+konwencja nazewnicza poleceń w PowerShellu: <czasownik>-<na czym ma operować>
+np.: Get-ExecutionPolicy, Set-ExecutionPolicy, Find-Module, Add-User, ...
+
+polecenie pomocy:
+Get-Help <polecenie>
+
+polecenie wyświetlające przykłady użycia jakiegoś polecenia:
+Get-Help <polecenie> -Examples
+
+polecenie zwracające listę dostępnych w danej chwili modułów:
+Get-Module -ListAvailable
+
+polecenie służące do filtrowania wyników innego polecenia:
+Where-Object
+?
+
+polecenie zwracające listę dostępnych w danej chwili modułów, których wersja jest równa lub większa od 2.0.0.0:
+Get-Module -ListAvailable | Where-Object {$_.Version -ge "2.0.0.0"}
+Get-Module -ListAvailable | ? {$_.Version -ge "2.0.0.0"}
+
+pętla while:
+While-Object
+%
+
+polecenie zwracające listę komend pochodzących z dostępnych w danej chwili modułów, których wersja jest równa lub większa od 2.0.0.0:
+Get-Module -ListAvailable | ? {$_.Version -ge "2.0.0.0"} | % {Get-Command -Module $_.Name}
+
+polecenie zwracające listę komend, które w nazwie mają "Add-" lub "Get-", pochodzących z dostępnych w danej chwili modułów, których wersja jest równa lub większa od 2.0.0.0:
+Get-Module -ListAvailable | ? {$_.Version -ge "2.0.0.0"} | % {Get-Command -Module $_.Name} | ? {($_.Name -like "Add-*") -or ($_.Name -like "Get-*")}
+
+polecenie otwierające w nowym oknie tabelkę z komendami, które w nazwie mają "Add-" lub "Get-", pochodzącymi z dostępnych w danej chwili modułów, których wersja jest równa lub większa od 2.0.0.0:
+Get-Module -ListAvailable | ? {$_.Version -ge "2.0.0.0"} | % {Get-Command -Module $_.Name} | ? {($_.Name -like "Add-*") -or ($_.Name -like "Get-*")} | Out-GridView
+
+polecenie zapisujące do pliku listę komend, które w nazwie mają "Add-" lub "Get-", pochodzących z dostępnych w danej chwili modułów, których wersja jest równa lub większa od 2.0.0.0:
+Get-Module -ListAvailable | ? {$_.Version -ge "2.0.0.0"} | % {Get-Command -Module $_.Name} | ? {($_.Name -like "Add-*") -or ($_.Name -like "Get-*")} | Out-File $env:TEMP\$plik
+
+polecenie, które nie zwraca listy komend, które w nazwie mają "Add-" lub "Get-", pochodzących z dostępnych w danej chwili modułów, których wersja jest równa lub większa od 2.0.0.0:
+Get-Module -ListAvailable | ? {$_.Version -ge "2.0.0.0"} | % {Get-Command -Module $_.Name} | ? {($_.Name -like "Add-*") -or ($_.Name -like "Get-*")} | Out-Null
+
+polecenie importujące dany moduł:
+Import-Module <moduł>
+ipmo <moduł>
+
+np.: Import-Module BitsTransfer / ipmo BitsTransfer
+
+polecenie zwracające wszystkie komendy w danym module:
+Get-Command -Module <moduł>
+
+np.: Get-Command -Module BitsTransfer
+
+polecenia służące do pobrania Ubuntu z szuflandii:
+$cred = Get-Credential
+Start-BitsTransfer -Source http://szuflandia.pjwstk.edu.pl/pub/repo/java/lubuntu_13_04_v02.zip -Destination D:\ -Credential $cred -Authentication Negotiate
+
+aby to drugie polecenie nie blokowało terminala, można je uruchomić przy użyciu zmiennej:
+$job = Start-BitsTransfer -Source http://szuflandia.pjwstk.edu.pl/pub/repo/java/lubuntu_13_04_v02.zip -Destination D:\ -Credential $cred -Authentication Negotiate -Asynchronous -DisplayName "Moj Bits Transfer"
+
+można potem sprawdzić stan jego transferu poleceniem:
+Get-BitsTransfer
+
+polecenie kończące transfer uruchomiony w tle:
+Complete-BitsTransfer -BitsJob $job
+
+polecenie pobierające moje repozytorium z zajęć ukos z GitHuba
+Start-BitsTransfer -Source https://github.com/s22442/ukos2020-21_14c/archive/master.zip -Destination C:\Users\<użytkownik>\Downloads\
+
+polecenie mierzące czas wykonywania się jakiegoś polecenia:
+Measure-Command
+
+polecenie uruchamiające notatnik
+& C:\Windows\notepad.exe
+
+informacje o zainstalowanych aplikacjach są przechowywane w:
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall
+
+polecenie wyświetlające dostępne dyski:
+Get-PSDrive
+
+wejście do rejestru systemu:
+cd hklm:\
+cd hklm:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall
+
+"WMI – zestaw protokołów i rozszerzeń systemu Windows umożliwiających zarządzanie i dostęp do zasobów komputera, takich jak adaptery sieciowe, aktualnie otwarte programy, lista procesów, odczyty z wbudowanych czujników temperatury, odczytów woltomierzy itp."
+źródło: Wikipedia
+
+Get-WmiObject -Class Win32_Product | Format-Table -AutoSize
+
+wyświetlanie tylko pól Name oraz Vendor:
+Get-WmiObject -Class Win32_Product | Select-Object Name, Vendor | Format-Table -AutoSize
+
+tylko pakiety od Microsoftu:
+Get-WmiObject -Class Win32_Product | ?{$_.Vendor.toLower() -like "*microsoft*"} | Select-Object Name, Vendor | Format-Table -AutoSize
+
+funkcja wyświetlająca notyfikacje w Windowsie:
+function GiveMePopup {
+    param(
+        [Parameter(Mandatory=$true)]
+        $Text,
+   
+        [Parameter(Mandatory=$true)]
+        $Title,
+   
+        [ValidateSet('None', 'Info', 'Warning', 'Error')]
+        $Icon = 'Info',
+
+        $Timeout = 10000
+    )
+    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+    $icoPath = Get-Process -id $pid | Select-Object -ExpandProperty Path
+    $myNotification = New-Object System.Windows.Forms.NotifyIcon
+    $myNotification.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($icoPath)
+    $myNotification.BalloonTipIcon = $Icon
+    $myNotification.BalloonTipText = $Text 
+    $myNotification.BalloonTipTitle = $Title
+    $myNotification.Visible = $True 
+    $myNotification.ShowBalloonTip(1000)
+}
+
+wywołanie powyższej funkcji:
+GiveMePopup -Text "Go to Windows Update to install the updates now." -Title "Updates are available" -Icon Info
+GiveMePopup -Text "Go to Windows Update to install the updates now.`nNew line" -Title "Updates are available" -Icon Info
+
+wywołanie w pętli:
+For($i = 1; $i -le 10; $i++) {
+    GiveMePopup -Text "Go to Windows Update to install the updates now." -Title "Updates are available" -Icon Info
+}

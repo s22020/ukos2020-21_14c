@@ -306,4 +306,62 @@
 	^                              cd
 	[…]
 
-< - - Powyższe obejmuje zakres materiału do 269 wiersza skryptu - - >
+16. Notyfikacje – wpisanie poniższych poleceń: 
+
+ 
+	[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+	$icoPath = Get-Process -id $pid | Select-Object -ExpandProperty Path 
+	$myNotification = New-Object System.Windows.Forms.NotifyIcon 
+	$myNotification.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($icoPath) 
+	$myNotification.BalloonTipIcon = 'Error' 
+	$myNotification.BalloonTipText = "Your cat has meowed!"  
+	$myNotification.BalloonTipTitle = "Cat Error" 
+	$myNotification.Visible = $True  
+	$myNotification.ShowBalloonTip(10000) 
+
+	Pozwala na wywołanie powiadomienia (notyfikacji) w systemie (o oznaczeniu „Error”, nagłówku „Cat Error” i informacji „Your cat has meowed!”). 
+
+
+	Powyższe można również „ująć” za pomocą funkcji, tzn. definiując funkcję pozwalającą na wywoływanie powiadomień: 
+
+ 
+	function GiveMePopup { 
+
+		param( 
+
+			[Parameter(Mandatory=$true)] 
+			$Text, 
+			[Parameter(Mandatory=$true)] 
+			$Title, 
+			[ValidateSet('None', 'Info', 'Warning', 'Error')] 
+			$Icon = 'Info', 
+			$Timeout = 10000 
+
+		) 
+
+		[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+		$icoPath = Get-Process -id $pid | Select-Object -ExpandProperty Path 
+		$myNotification = New-Object System.Windows.Forms.NotifyIcon 
+		$myNotification.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($icoPath) 
+		$myNotification.BalloonTipIcon = $Icon 
+		$myNotification.BalloonTipText = $Text  
+		$myNotification.BalloonTipTitle = $Title 
+		$myNotification.Visible = $True  
+		$myNotification.ShowBalloonTip(1000) 
+	} 
+
+	Zdefiniowanie funkcji pozwala na wywoływanie powiadomień w prostszy sposób – wpisanie: 
+
+	GiveMePopup -Text "Your cat has meowed!" -Title "Cat Error" -Icon Error 
+
+	Pozwala na uzyskanie takiego samego efektu (powiadomienia o tej samej treści), jak wpisanie poszczególnych linijek powyżej. 
+
+	Zastosowanie pętli for pozwala na wywołanie kilku powiadomień, jedno po drugim: 
+
+ 	For($i = 1; $i -le 10; $i++) { 
+		GiveMePopup -Text "WTF-second passed!" -Title "WTF Notification" -Icon Info 
+	} 
+
+	Treść powiadomień jest ograniczona do czterech linijek tekstu: 
+
+	GiveMePopup -Text "Pierwszy wiersz`nDrugi wiersz`nTrzeci wiersz`nCzwarty wiersz" -Title "Długa informacja" -Icon Info 

@@ -22,3 +22,9 @@ Dzień kolokwium. Dowiedziałem się o Richardzie Stallmanie, licencjach, jądra
 
 2021-01-16
 Powershell. Dowiedziałem się tylu rzeczy, że nie ma sensu ich tu wypisywać. Większość rzeczy, które pojawiają się w pliku zajecia-6.md są dla mnie nowe, więc jakby co proszę się tam kierować. Ponadto bardzo doceniam podejście Pana, który prowadził ćwiczenia, gdyż nie skupiał się tylko na oczywistościach, ale prezentował też inne, ciekawsze rozwiązania np. pobieranie pliku za pomocą modułu BitsTransfer.
+
+2021-01-30
+Przerabianie ćwiczeń i poleceń z Powershella cz. 1. Dowiedziałem się m.in. jak wyświetlić zawartość pliku do którego zapisaliśmy wynik polecenia ("Get-Content $env:TEMP\$plik"), notyfikacje i wykorzystywanie funkcji do ich wyświetlania.
+
+2021-02-13
+Ostatnie zajęcia z UKOSu, kontynuacja poprzednich zajęć. Ćwiczenia przerobiłem wcześniej, więc żadna nowość mnie nie spotkała.
